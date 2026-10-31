@@ -56,12 +56,7 @@ Run `/dino on` and press a game's number to pick it. Your pick stays until `/din
 | **Dino Run** | `/dino on dino` | **Space** jumps. Jump the cacti and the low birds; stay on the ground for the high ones. It speeds up as you go. |
 | **Copter** | `/dino on copter` | **Hold Space** to climb, let go to sink. Fly through the gaps in the walls. It hovers until your first press. |
 
-```
-    ━━━━┳━━━━                 ██                       ██
-  ╺━━━▟███▙▖                  ██
-                                                       ██
-                              ██                       ██
-```
+![Copter: the helicopter flying toward a gap in the wall above the prompt](docs/copter.png)
 
 Want another game? [Add one](#adding-a-game): it is one file.
 
