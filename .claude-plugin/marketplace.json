@@ -1,16 +1,18 @@
 {
-  "name": "agent-dino-local",
+  "name": "vijaytembugade",
   "owner": {
-    "name": "Agent Dino"
+    "name": "Vijay Tembugade",
+    "url": "https://github.com/vijaytembugade"
+  },
+  "metadata": {
+    "description": "Claude Code plugins by Vijay Tembugade."
   },
   "plugins": [
     {
       "name": "agent-dino",
       "source": "./",
-      "description": "Terminal mini-games (Dino Run, Copter) that play above the prompt while Claude works. Uses no tokens. /dino on to pick a game."
+      "description": "Mini-games (Dino Run, Copter) that play above the prompt while Claude works. Press Space to play. Uses no tokens.",
+      "category": "entertainment"
     }
-  ],
-  "metadata": {
-    "description": "Native Agent Dino plugin for Claude Code."
-  }
+  ]
 }

@@ -137,8 +137,8 @@ Claude local development:
 Claude marketplace installation:
 
 ```sh
-claude plugin marketplace add /path/to/agent-dino
-claude plugin install agent-dino@agent-dino-local
+claude plugin marketplace add vijaytembugade/agent-dino
+claude plugin install agent-dino@vijaytembugade
 ./agent-dino --installed-hooks claude
 ```
 

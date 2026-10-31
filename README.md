@@ -1,26 +1,69 @@
 # Agent Dino
 
-A native dinosaur game inside Claude Code. Install once, start `claude` normally,
-and the game appears above the prompt while Claude works, including auto mode.
-Enabled by default; no launcher, Python environment, or shell wrapper is required.
+Mini-games inside Claude Code. Install once, start `claude` normally, and a game
+plays right above the prompt while Claude works, including auto mode. Press
+**Space** to play; no clicking, no split screen, and **no tokens used**. No
+launcher, Python environment, or shell wrapper is required.
+
+![Dino Run playing above the Claude Code prompt while Claude is thinking](docs/dino-run.png)
 
 ## Install
 
-Requires Claude Code **2.1.287 or newer**, with native mods enabled.
-From this checkout:
+Requires Claude Code **2.1.292 or newer**, with native mods enabled. In your shell:
 
 ```sh
-claude plugin marketplace add .
-claude plugin install agent-dino@agent-dino-local --scope user
+claude plugin install agent-dino --marketplace vijaytembugade/agent-dino
 ```
 
-In an already open Claude session, run `/reload-plugins`, or restart Claude normally.
-You should see `Agent Dino ON` above the prompt. Submit a work prompt to start the
-game automatically, or use `/dino play` to try it immediately.
+Or as two steps (any version from 2.1.287):
 
-This is a local plugin; it has not been published to a public marketplace.
-To share it, distribute the native plugin archive, extract it, and run the same
-installation commands from the extracted directory.
+```sh
+claude plugin marketplace add vijaytembugade/agent-dino
+claude plugin install agent-dino@vijaytembugade
+```
+
+Or from inside a Claude Code session (2.1.275 or newer):
+
+```
+/plugin install agent-dino --marketplace vijaytembugade/agent-dino
+```
+
+Then run `/reload-plugins`, or restart Claude. You should see `Agent Dino ON` above
+the prompt. Run `/dino on` to pick a game, then send any prompt to play while
+Claude works, or use `/dino play` to try it now.
+
+### Updates
+
+```sh
+claude plugin update agent-dino@vijaytembugade
+```
+
+To get new versions automatically, turn on auto-update for the `vijaytembugade`
+marketplace in `/plugin` → **Marketplaces**.
+
+### Uninstall
+
+```sh
+claude plugin uninstall agent-dino@vijaytembugade
+```
+
+## Games
+
+Run `/dino on` and press a game's number to pick it. Your pick stays until `/dino off`.
+
+| Game | Pick with | How to play |
+| --- | --- | --- |
+| **Dino Run** | `/dino on dino` | **Space** jumps. Jump the cacti and the low birds; stay on the ground for the high ones. It speeds up as you go. |
+| **Copter** | `/dino on copter` | **Hold Space** to climb, let go to sink. Fly through the gaps in the walls. It hovers until your first press. |
+
+```
+    ━━━━┳━━━━                 ██                       ██
+  ╺━━━▟███▙▖                  ██
+                                                       ██
+                              ██                       ██
+```
+
+Want another game? [Add one](#adding-a-game): it is one file.
 
 ## Controls inside Claude
 
@@ -64,7 +107,7 @@ than attempting to read private model reasoning.
 
 - Run `/dino status`; use `/dino on` if it was previously disabled.
 - Run `/reload-plugins` after installing, or restart `claude`.
-- Check `claude plugin list` for enabled `agent-dino@agent-dino-local`.
+- Check `claude plugin list` for enabled `agent-dino@vijaytembugade`.
 - Update Claude if native mods are unsupported. A policy disabling plugins or
   mods must be handled through your normal administrator process.
 - A short terminal can leave too little space for the automatic game; enlarge
@@ -75,15 +118,132 @@ than attempting to read private model reasoning.
 
 ## Adding a game
 
-1. Write `hooks/games/<id>.js` exporting a class with `action()`, `reset()`,
-   `tick(seconds)`, `frame(columns, rows)` (returns `rows` lines of text) and the
-   fields `over`, `score`, `best`. `hooks/games/dino.js` is a complete example.
-2. Add one entry to `GAMES` in `hooks/games/index.js`: `id`, `name`,
-   `description`, `actionLabel` (the button, e.g. `Jump`) and `hotkey` (one letter).
-3. Run `claude plugin test .`. The game now shows up in `/dino on`.
+A game is **one file** in `hooks/games/` plus **one line** in
+`hooks/games/index.js`. You never touch Claude Code's API: `hooks/register.js`
+already handles the commands, the game list, Space, the timer, pausing and drawing,
+for every game.
 
-Each game gets a single action button, so it plays the same in the pane and above
-the prompt. Keep games pure: no files, network, or processes.
+### 1. Write the game
+
+Create `hooks/games/<id>.js`. Copy this skeleton, which is a complete, working
+game (a ball you bounce over gaps), then make it yours:
+
+```js
+// hooks/games/bounce.js: pure simulation and drawing, nothing else.
+export class BounceGame {
+  constructor() {
+    this.best = 0        // best score this session; reset() keeps it
+    this.columns = 60    // frame() updates these to the space available
+    this.rows = 7
+    this.reset()
+  }
+
+  reset() {              // a new round
+    this.y = 0           // height above the ground, in rows
+    this.vy = 0
+    this.distance = 0
+    this.score = 0
+    this.over = false    // true shows GAME OVER; action() then restarts
+  }
+
+  action() {             // Space (and the action button): this game's one control
+    if (this.over) return this.reset()
+    if (this.y === 0) this.vy = 12
+  }
+
+  tick(seconds) {        // called about 20 times a second while the game runs
+    if (this.over) return
+    this.vy -= 30 * seconds
+    this.y = Math.max(0, this.y + this.vy * seconds)
+    this.distance += 12 * seconds
+    this.score = Math.floor(this.distance)
+    this.best = Math.max(this.best, this.score)
+    const hole = Math.floor(this.distance) % 30 > 26   // a gap in the ground
+    if (hole && this.y === 0) this.over = true
+  }
+
+  frame(columns, rows) { // return exactly `rows` lines, each at most `columns` wide
+    this.columns = columns
+    this.rows = rows
+    const lines = Array.from({ length: rows }, () => ' '.repeat(columns))
+    const ballRow = rows - 2 - Math.min(rows - 2, Math.round(this.y))
+    lines[ballRow] = '    ' + (this.over ? '✸' : '●')
+    lines[rows - 1] = Array.from({ length: columns }, (_, x) =>
+      (Math.floor(this.distance) + x - 4) % 30 > 26 ? ' ' : '▔').join('')
+    return lines.join('\n')
+  }
+}
+```
+
+What the plugin expects from every game:
+
+| Member | What it does |
+| --- | --- |
+| `action()` | The single control, sent by **Space**, **1**, Enter, or the button. Restart the round when `over` is true. |
+| `reset()` | Start a new round, keeping `best`. |
+| `tick(seconds)` | Advance the game. `seconds` is small (about 0.05), but cap it in case of a slow frame. |
+| `frame(columns, rows)` | Draw. Return `rows` lines joined by `\n`. Above the prompt you get about 4–9 rows and 20–80 columns, so it must look right at any size in that range. |
+| `over`, `score`, `best` | Read by the header line: `GAME OVER`, `12 / best 40`. `score` may be a field or a getter. |
+
+### 2. List it
+
+Add one entry to `GAMES` in `hooks/games/index.js`:
+
+```js
+import { BounceGame } from './bounce.js'
+
+export const GAMES = [
+  // ...the existing games
+  { id: 'bounce', name: 'Bounce', description: 'Hop the gaps in the ground',
+    actionLabel: 'Hop', hotkey: 'h', create: () => new BounceGame() },
+]
+```
+
+`id` is what people type in `/dino on bounce`. `actionLabel` names the button.
+`hotkey` is one lowercase letter, used in the split pane.
+
+### 3. Try it
+
+Start Claude Code with your clone loaded for that session (it takes the place of
+an installed copy, so you see your changes):
+
+```sh
+claude --plugin-dir .
+```
+
+Then run `/dino on bounce` and `/dino play`. After editing, run `/reload-plugins`.
+To iterate faster, render frames straight from Node:
+
+```sh
+node --input-type=module -e "
+import { BounceGame } from './hooks/games/bounce.js'
+const g = new BounceGame(); g.action(); g.tick(0.2)
+console.log(g.frame(60, 7))"
+```
+
+### 4. Test it and open a pull request
+
+Add a test to `native-tests/dino.test.ts` proving the game is **fair**: every
+obstacle can be cleared. See the Dino Run and Copter tests there, which fly an
+autopilot through hundreds of runs. Then run the full check:
+
+```sh
+git config core.hooksPath .githooks   # once: runs the check before every push
+node scripts/security-check.mjs       # security rules + plugin validate + tests
+```
+
+### Rules for games
+
+These are enforced by the security check, on your machine and on every pull request:
+
+- **Pure:** a game only computes and returns text. No `$`, no Claude Code API, no
+  files, network, processes, timers, `eval`, or imports from outside `hooks/games/`.
+- **One control:** everything is played with a single action, so it works with
+  Space above the prompt and with a button in the split pane.
+- **Cheap:** `tick()` and `frame()` run 20 times a second while someone is working.
+  Keep loops bounded and the output exactly the size asked for.
+- **Fair:** speed can grow, but every obstacle must stay clearable; prove it in a test.
+- **Original art:** draw your own sprites with Unicode block and box characters.
 
 ## Security
 
@@ -94,17 +254,17 @@ automatically; run the same check locally with `git config core.hooksPath .githo
 ## Development
 
 ```sh
-claude plugin validate .
+claude plugin validate --strict .
 claude plugin test .
 ```
 
 `hooks/register.js` implements native commands, lifecycle handling, UI, and the
-saved setting. Games live in `hooks/games/`: `dino.js` is the dinosaur run, `copter.js` the helicopter, and
-`index.js` is the catalog the `/dino on` list is built from. `native-tests/dino.test.ts` tests the actual mod using Claude's test
-runner, without an AI account or network. No npm dependencies are required.
+saved setting. Games live in `hooks/games/`: `dino.js` is Dino Run, `copter.js` is Copter, and
+`index.js` is the catalog the `/dino on` list is built from. `native-tests/dino.test.ts`
+tests the actual mod using Claude's test runner, without an AI account or network. No npm dependencies are required.
 The native game makes no network, shell, or model calls.
 
-Claude native plugin version: **1.3.1**. The older Python adapter remains at
+Claude native plugin version: **1.4.0**. The older Python adapter remains at
 **0.2.3** and is documented separately in [LEGACY.md](LEGACY.md). Codex support
 currently uses that optional legacy adapter; this native UI implementation is
 for Claude Code.

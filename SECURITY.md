@@ -45,7 +45,8 @@ watches when Claude starts and stops working. That is all it is allowed to do.
 5. **No dependencies.** No `package.json` dependencies, no install scripts,
    no vendored or minified code. Write the few lines instead.
 6. **Source only.** No binaries or archives in the repository (`dist/` and
-   `build/` are ignored). The only image is `.claude-plugin/icon.png`.
+   `build/` are ignored). The only images are `.claude-plugin/icon.png` and
+   screenshots in `docs/` (PNG, JPEG or GIF), shown by the README.
 7. **No secrets**, not even "test" keys that look real.
 8. **Legacy Python adapter** (`agent_dino/`): no network modules, `pickle`,
    `eval`/`exec`, `os.system` or `shell=True`. It may run tmux and a pty because
