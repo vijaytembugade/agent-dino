@@ -62,12 +62,18 @@ watches when Claude starts and stops working. That is all it is allowed to do.
 | Your computer | `git push` | `.githooks/pre-push` |
 | GitHub | every pull request and push to `main` | `.github/workflows/security.yml` |
 
-Both run the same three steps:
+Both run the same steps:
 
 ```sh
 node scripts/security-check.test.mjs   # proves every rule still catches what it should
+node scripts/version-check.mjs         # plugin code changed? then the version must go up
 node scripts/security-check.mjs        # the rules above, then claude plugin validate + test
 ```
+
+The version check exists because users only receive an update when `version`
+rises: a PR that changes `hooks/` (or the marketplace file) must raise `version`
+in both `plugin.json` and `.claude-plugin/plugin.json`, to the same value.
+Changes to docs, tests and scripts need no bump.
 
 Turn on the local check once per clone:
 
@@ -102,5 +108,6 @@ Maintainers: turn on branch protection for `main` with **Require a pull request*
 ## Releasing to the marketplace
 
 1. All checks pass on `main`, from a clean checkout.
-2. The version is bumped in `plugin.json`, `.claude-plugin/plugin.json` and the README.
+2. The version is bumped in `plugin.json`, `.claude-plugin/plugin.json` and the README
+   (the version check enforces the first two on every PR).
 3. The release is built and tagged by a maintainer from that commit, never from a fork.

@@ -43,9 +43,32 @@ marketplace in `/plugin` → **Marketplaces**.
 
 ### Uninstall
 
+**Just want it out of the way?** Run `/dino off` inside Claude. The game stops at
+once and stays off, but the plugin remains installed for later (`/dino on`).
+
+**Remove it completely**, in your shell:
+
 ```sh
 claude plugin uninstall agent-dino@vijaytembugade
+claude plugin marketplace remove vijaytembugade   # optional: also forget the marketplace
 ```
+
+Or run `/plugin` inside a Claude Code session and uninstall it from there.
+
+Then run `/reload-plugins`, or restart Claude. The game and the `/dino` commands
+are gone. Agent Dino never writes to your projects, changes your shell, or leaves
+a process running; its only data is three small settings (`enabled`, `game`,
+`split`) inside Claude Code's own plugin storage.
+
+If you installed an early version from a local checkout, remove that copy too:
+
+```sh
+claude plugin uninstall agent-dino@agent-dino-local
+claude plugin marketplace remove agent-dino-local
+```
+
+If you used the old Python shell integration, also run
+`./agent-dino uninstall-default` once from that checkout (see [LEGACY.md](LEGACY.md)).
 
 ## Games
 
@@ -216,7 +239,13 @@ const g = new BounceGame(); g.action(); g.tick(0.2)
 console.log(g.frame(60, 7))"
 ```
 
-### 4. Test it and open a pull request
+### 4. Bump the version
+
+Raise `version` in both `plugin.json` and `.claude-plugin/plugin.json`
+(`1.4.0` → `1.5.0` for a new game, `1.4.1` for a fix). Users only get your change
+when the version goes up, so a PR that changes `hooks/` without a bump fails its check.
+
+### 5. Test it and open a pull request
 
 Add a test to `native-tests/dino.test.ts` proving the game is **fair**: every
 obstacle can be cleared. See the Dino Run and Copter tests there, which fly an

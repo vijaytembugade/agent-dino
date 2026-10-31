@@ -36,3 +36,14 @@ for (const expected of [
   'declares dependencies', 'declares an install script', 'Anthropic API key', 'payload.zip: binary file', 'sprite.png: binary file', 'versions differ',
 ]) assert.ok(found.includes(expected), `missing: ${expected}\n--- got:\n${found}`)
 console.log('✔ security-check self-test: every rule fires')
+
+// Version check: plugin code changes must raise the version.
+const { check, newer } = await import('./version-check.mjs')
+assert.ok(newer('1.4.1', '1.4.0') && newer('1.10.0', '1.9.9') && newer('2.0.0', '1.99.99'))
+assert.ok(!newer('1.4.0', '1.4.0') && !newer('1.3.9', '1.4.0') && !newer('v1.5', '1.4.0'))
+assert.deepEqual(check({ changed: ['README.md', 'scripts/x.mjs'], base: '1.4.0', head: ['1.4.0', '1.4.0'] }), [])
+assert.deepEqual(check({ changed: ['hooks/games/dino.js'], base: '1.4.0', head: ['1.4.1', '1.4.1'] }), [])
+assert.match(check({ changed: ['hooks/games/dino.js'], base: '1.4.0', head: ['1.4.0', '1.4.0'] }).join(), /not above 1.4.0/)
+assert.match(check({ changed: ['hooks/register.js'], base: '1.4.0', head: ['1.3.0', '1.3.0'] }).join(), /not above/)
+assert.match(check({ changed: ['README.md'], base: '1.4.0', head: ['1.4.1', '1.4.0'] }).join(), /disagree/)
+console.log('✔ version-check self-test: bumps required for plugin code only')
