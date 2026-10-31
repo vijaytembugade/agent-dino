@@ -10,7 +10,7 @@ const clean = {
   'plugin.json': '{"version":"1.0.0"}',
   '.claude-plugin/plugin.json': '{"version":"1.0.0"}',
 }
-assert.deepEqual(scan(clean), [])
+assert.deepEqual(scan({ ...clean, 'docs/screen.png': null, '.claude-plugin/icon.png': null }), [])
 
 const bad = {
   'hooks/games/evil.js': "export class G { tick() { fetch('https://x.example') } }",
@@ -24,6 +24,7 @@ const bad = {
   'package.json': '{"dependencies":{"left-pad":"1"},"scripts":{"postinstall":"node x"}}',
   'notes.txt': 'key ' + 'sk-ant' + '-api03-abcdefghijklmnopqrstuvwxyz', // split so the repo scan does not flag this file
   'dist/payload.zip': null,
+  'hooks/games/sprite.png': null,
   'plugin.json': '{"version":"1.0.0"}',
   '.claude-plugin/plugin.json': '{"version":"1.0.1"}',
 }
@@ -32,6 +33,6 @@ for (const expected of [
   'evil.js: uses network API', 'evil.js: uses URL', 'sneaky.js: a game touches the engine', 'eval.js: uses eval()',
   'dep.js: imports package "lodash"', 'timer.js: a game runs its own timer', 'hooks "prompt.compose"', 'calls $.model.complete', 'returns `context`',
   'sets a permission decision', 'modules must be exactly', 'x.py: uses network', 'x.py: uses subprocess with shell=True',
-  'declares dependencies', 'declares an install script', 'Anthropic API key', 'payload.zip: binary file', 'versions differ',
+  'declares dependencies', 'declares an install script', 'Anthropic API key', 'payload.zip: binary file', 'sprite.png: binary file', 'versions differ',
 ]) assert.ok(found.includes(expected), `missing: ${expected}\n--- got:\n${found}`)
 console.log('✔ security-check self-test: every rule fires')

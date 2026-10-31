@@ -1,9 +1,20 @@
 {
   "name": "agent-dino",
-  "version": "1.3.1",
-  "description": "A native dinosaur game while Claude works. /dino on, off, play, and status; no launcher required.",
+  "displayName": "Agent Dino",
+  "version": "1.4.0",
+  "description": "Mini-games (Dino Run, Copter) that play above the prompt while Claude works. Press Space to play. Uses no tokens.",
   "license": "MIT",
   "author": {
-    "name": "Agent Dino contributors"
-  }
+    "name": "Vijay Tembugade",
+    "url": "https://github.com/vijaytembugade"
+  },
+  "homepage": "https://github.com/vijaytembugade/agent-dino#readme",
+  "repository": "https://github.com/vijaytembugade/agent-dino",
+  "keywords": [
+    "game",
+    "fun",
+    "dino",
+    "terminal",
+    "mod"
+  ]
 }

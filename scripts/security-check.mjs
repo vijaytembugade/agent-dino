@@ -22,6 +22,8 @@ export const ALLOWED_EVENTS = new Set([
 ])
 
 const CODE = /\.(m?js|ts|tsx)$/
+// The only binaries allowed: the plugin icon and README images in docs/.
+const IMAGE = /^(\.claude-plugin\/icon\.png|docs\/[\w.-]+\.(png|jpe?g|gif))$/
 const BINARY = /\.(zip|whl|tar|gz|tgz|exe|dll|so|dylib|node|wasm|bin|jar|pyc)$/i
 const SKIP = new Set(['.git', '.venv', '.tools', 'node_modules', 'build', 'dist', '__pycache__', '.claude-plugin/types'])
 const SECRETS = [
@@ -54,7 +56,7 @@ export function scan(files) {
   const problems = []
   const fail = (path, why) => problems.push(`${path}: ${why}`)
   for (const [path, text] of Object.entries(files)) {
-    if (text === null) { if (path !== '.claude-plugin/icon.png') fail(path, 'binary file; commit source only (see SECURITY.md, "Files")'); continue }
+    if (text === null) { if (!IMAGE.test(path)) fail(path, 'binary file; commit source only (images go in docs/; see SECURITY.md)'); continue }
     for (const [re, what] of SECRETS) if (re.test(text)) fail(path, `looks like a ${what}`)
     if (path === 'scripts/security-check.mjs' || path.startsWith('scripts/')) continue
     if (path.startsWith('hooks/') && CODE.test(path)) {
@@ -136,6 +138,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (problems.length) { console.error(`\n${problems.length} security problem(s). See SECURITY.md.`); process.exit(1) }
   console.log(`✔ static security rules: ${Object.keys(files).length} files clean`)
   if (!process.argv.includes('--static')) {
-    if (!claude(root, ['validate']) || !claude(root, ['test'])) process.exit(1)
+    if (!claude(root, ['validate', '--strict']) || !claude(root, ['test'])) process.exit(1)
   }
 }
