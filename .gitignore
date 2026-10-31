@@ -1,0 +1,10 @@
+.venv/
+.tools/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.DS_Store
+
+.claude-plugin/types/

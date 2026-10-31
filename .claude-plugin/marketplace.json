@@ -1,0 +1,16 @@
+{
+  "name": "agent-dino-local",
+  "owner": {
+    "name": "Agent Dino"
+  },
+  "plugins": [
+    {
+      "name": "agent-dino",
+      "source": "./",
+      "description": "Terminal mini-games (Dino Run, Copter) that play above the prompt while Claude works. Uses no tokens. /dino on to pick a game."
+    }
+  ],
+  "metadata": {
+    "description": "Native Agent Dino plugin for Claude Code."
+  }
+}

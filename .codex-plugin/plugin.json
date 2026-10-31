@@ -1,0 +1,10 @@
+{
+  "name": "agent-dino",
+  "version": "0.2.3",
+  "description": "A terminal dinosaur runner that wakes up while your coding agent works. Use with the agent-dino launcher.",
+  "license": "MIT",
+  "hooks": "./hooks/codex.json",
+  "author": {
+    "name": "Agent Dino contributors"
+  }
+}

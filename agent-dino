@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Run from a checkout, using its local virtual environment when available."""
+import os
+from pathlib import Path
+import sys
+
+venv = Path(__file__).resolve().parent / ".venv"
+interpreter = venv / "bin/python"
+if interpreter.exists() and Path(sys.prefix) != venv:
+    os.execv(str(interpreter), [str(interpreter), __file__, *sys.argv[1:]])
+
+from agent_dino.cli import main
+
+raise SystemExit(main())

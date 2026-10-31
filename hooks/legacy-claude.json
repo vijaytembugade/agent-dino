@@ -1,0 +1,149 @@
+{
+  "description": "Agent Dino lifecycle signals (silent outside the launcher).",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "Elicitation": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ],
+    "ElicitationResult": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/agent_dino/hook.py\"",
+            "timeout": 2,
+            "statusMessage": "Agent Dino"
+          }
+        ]
+      }
+    ]
+  }
+}

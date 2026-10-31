@@ -1,0 +1,6 @@
+{
+  "description": "Native Agent Dino game and commands inside Claude Code.",
+  "modules": [
+    "./register.js"
+  ]
+}

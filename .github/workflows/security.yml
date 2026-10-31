@@ -1,0 +1,33 @@
+# Runs SECURITY.md's checks on every pull request. The same checks run locally in .githooks/pre-push.
+name: security
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Read-only token: a pull request can never write to the repository or its releases.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Actions are pinned to full commit hashes, so a moved tag cannot change what runs.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Security rules self-test
+        run: node scripts/security-check.test.mjs
+      - name: Static security rules
+        run: node scripts/security-check.mjs --static
+      # Exact version: a new Claude Code release cannot silently change the gate.
+      - name: Install Claude Code
+        run: npm install --global @anthropic-ai/claude-code@2.1.316
+      - name: Plugin validate and tests (no account or network needed)
+        run: node scripts/security-check.mjs

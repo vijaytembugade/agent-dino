@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-dino"
+version = "0.2.3"
+description = "Play a terminal dinosaur runner while your coding agent works."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["pyte>=0.8.2,<0.9"]
+license = {text = "MIT"}
+classifiers = [
+  "Environment :: Console :: Curses",
+  "Operating System :: POSIX",
+  "Programming Language :: Python :: 3",
+]
+
+[project.scripts]
+agent-dino = "agent_dino.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agent_dino*"]
+
